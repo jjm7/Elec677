@@ -66,7 +66,7 @@ class NeuralNetwork(object):
         self.W2 = np.random.randn(self.nn_hidden_dim, self.nn_output_dim) / np.sqrt(self.nn_hidden_dim)
         self.b2 = np.zeros((1, self.nn_output_dim))
 
-    def actFun(self, z, type):
+    def actFun(self, z, typee):
         '''
         actFun computes the activation functions
         :param z: net input
@@ -74,11 +74,16 @@ class NeuralNetwork(object):
         :return: activations
         '''
 
-        # YOU IMPLMENT YOUR actFun HERE
+        if typee == 'Tanh':
+            z = (np.exp(z) - np.exp(-z)) /  (np.exp(z) + np.exp(-z))
+        elif typee == 'ReLU':
+            z = np.max(0,z)
+        else:
+            z = 1/( 1+np.exp(-z) )
 
-        return None
+        return z
 
-    def diff_actFun(self, z, type):
+    def diff_actFun(self, z, typee):
         '''
         diff_actFun computes the derivatives of the activation functions wrt the net input
         :param z: net input
@@ -86,9 +91,16 @@ class NeuralNetwork(object):
         :return: the derivatives of the activation functions wrt the net input
         '''
 
-        # YOU IMPLEMENT YOUR diff_actFun HERE
+        if typee == 'Tanh':
+            z = 1 - actFun(z, 'Tanh') * actFun(z, 'Tanh')
+        elif typee == 'ReLU':
+            z = 1
+            if z <= 0:
+                z = 0
+        else:
+            z = actFun(z, 'Sigmoid') * ( 1- actFun(z, 'Sigmoid'))
 
-        return None
+        return z
 
     def feedforward(self, X, actFun):
         '''
@@ -101,11 +113,12 @@ class NeuralNetwork(object):
 
         # YOU IMPLEMENT YOUR feedforward HERE
 
-        # self.z1 =
-        # self.a1 =
-        # self.z2 =
+        self.z1 = dot(self.W1.T,X) + self.b1
+        self.a1 = actFun(self.z1, self.actFun_type)
+        self.z2 = dot(self.W2.T,self.a1) + self.b2
+
         exp_scores = np.exp(self.z2)
-        self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+        self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True) #softmax 'layer'
         return None
 
     def calculate_loss(self, X, y):
@@ -118,10 +131,17 @@ class NeuralNetwork(object):
         num_examples = len(X)
         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
         # Calculating the loss
-
+        
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
+        observations , features = X.shape
+        numClasses = max(y+1)
+        data_loss = 0
 
-        # data_loss =
+        for ii in xrange(observations):
+            yOneHot = np.zeros(numClasses)
+            yOneHot[y[ii]] = 1  
+
+            data_loss = data_loss +  np.dot(yOneHot, np.log(self.probs))
 
         # Add regulatization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))

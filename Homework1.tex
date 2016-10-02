@@ -32,7 +32,6 @@ tmargin = 15mm,
 
 \section{Problem 1: Backpropogation in a simple Nueral Network}
 \subsection{Part A:  Dataset}
-
 The plot of the Two Moons dataset is displayed in Figure \ref{fig:partA}
 
 \begin{figure}[ht]
@@ -46,7 +45,12 @@ The plot of the Two Moons dataset is displayed in Figure \ref{fig:partA}
 
 
 \subsection{Part B - Activation Functions}
-\subsubsection{Part B1 - Derive the derivative for sigmoid function}
+\subsubsection{Part B1 - Implement activation functions}
+If you look in my code you can see I implemented the activations function. 
+
+
+\subsubsection{Part B2 - Derivative Derivations}
+\paragraph{ Part B2.1 -  Derivative for Sigmoid function}
 \begin{align*} 
 \sigma(z)= f(z) = \frac{1}{1+e^{-z}}  &= (1+ e^{-z})^{-1} \\
 \frac{df}{dz} : = -1* (1+ e^{-z})^{-2} * -e^{-z}  &= e^{-z}(1+ e^{-z})^{-2}  \text{~~~(by chain rule)}\\
@@ -60,19 +64,34 @@ The plot of the Two Moons dataset is displayed in Figure \ref{fig:partA}
 \Aboxed{f'(z) &= \sigma(z) (1-  \sigma(z)) } \\
 \end{align*}
 
-\subsubsection{Part B2 - Derivative for Tanh function}
+\paragraph{Part B2.2 - Derivative for Tanh function}
 
 \begin{align*} 
 f(z) = \text{tanh}(z) &= \frac{\text{sinh}(z)}{\text{cosh}(z)} \\
 &= \frac{e^z - e^{-z}}{e^z + e^{-z}} \\
 \frac{df}{dz} : &=  \frac{\text{cosh}(z) * \text{sinh}'(z) -  \text{sinh}(z)  * \text{cosh}'(z)}{(\text{cosh}(z))^2}  \text{~~~(by quotient rule)} \\ 
-&=  \frac{\text{cosh}(z)^2 1  \text{sinh}(z)^2 }{(\text{cosh}(z))^2} \\ 
+&=  \frac{\text{cosh}(z)^2 -  \text{sinh}(z)^2 }{(\text{cosh}(z))^2} \\ 
 &=  \frac{\text{cosh}(z)^2}{\text{cosh}(z)^2} - \frac{\text{sinh}(z)^2}{\text{cosh}(z)^2}\\ 
 \Aboxed{f'(z) &= 1- \text{tanh}^2(z)}\\ 
 \end{align*}
 
 
-\subsubsection{Part B3 - Derivative for ReLu function}
+\paragraph{Part B2.3 - Derivative for ReLu function}
+\begin{align*} 
+\text{ReLu}(z) = f(z)& = \text{max}(0,z)\\
+\Aboxed{ \frac{df}{dz} : &= \left\{
+    \begin{array}{ll}
+      0 ~~~ z\leq 0 \\ 
+      1 ~~~ z\geq 0 \\
+    \end{array}
+  \right. } \text{(I think the dirivitive here is pretty obvious)}\\
+\end{align*}
 
 
+\subsubsection{Part B3 - Implement activation function gradiants}
+If you look in my code you can see I implemented the activations function gradiants. 
+
+\subsection{Part C - Build the Neural Network}
+If you look in my code you can see I implemented the feedforward and loss functions
+\subsection{Part D - Backpropogation Derivations}
 \end{document}
