@@ -225,10 +225,10 @@ Which I changed some of the indexing to make the most sense. In this format $n \
 \begin{align*}
 \frac{\partial L}{\partial w_{1_{k,p}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})x_p \\
 \text{and the extention}&\text{ to matrix form is then} \\
-\frac{\partial L}{\partial \mathbf{W_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times n_2} \\
+\frac{\partial L}{\partial \mathbf{W_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times p} \\
 \text{If there is more}&\text{than one sample (which there always is)}\\
 \text{then we average}&\text{over all of the samples and the final solution is then} \\
-\Aboxed{\frac{\partial L}{\partial \mathbf{W_1}} &=\sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times n_2}} \\
+\Aboxed{\frac{\partial L}{\partial \mathbf{W_1}} &=  \frac{1}{N} \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times p}} \\
 \end{align*}
 
 \paragraph{$\frac{dL}{db_1}$ Derivation}
@@ -251,10 +251,10 @@ The partial derivative  $\frac{\partial z_{1_k}} {\partial b_{1_{k}} } =1$ simpl
 \begin{align*}
 \frac{\partial L}{\partial b_{1_{k}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})\\
 \text{and the resulting matrix} &\text{ form is then}\\
-\frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} \\
+\frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2^T} \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} \\
 \text{If there is more than one}&\text{ sample (which there always is) then we}\\
 \text{have to sum up and}& \text{ average over all samples and the gradient becomes}\\
-\Aboxed{ \frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} } \\
+\Aboxed{ \frac{\partial L}{\partial \mathbf{b_1}} &=  \frac{1}{N} \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2^T}  \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} } \\
 \end{align*}
 
 \subsubsection{Implementation of Derivations of Backpropogation Equations}

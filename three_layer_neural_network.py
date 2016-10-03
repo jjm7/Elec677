@@ -74,7 +74,7 @@ class NeuralNetwork(object):
         :return: activations
         '''
 
-        if typee == 'Tanh':
+        if typee == 'tanh':
             z = (np.exp(z) - np.exp(-z)) /  (np.exp(z) + np.exp(-z))
         elif typee == 'ReLU':
             z = np.max(0,z)
@@ -91,14 +91,14 @@ class NeuralNetwork(object):
         :return: the derivatives of the activation functions wrt the net input
         '''
 
-        if typee == 'Tanh':
-            z = 1 - actFun(z, 'Tanh') * actFun(z, 'Tanh')
-        elif typee == 'ReLU':
+        if self.actFun_type == 'tanh':
+            z = 1 - self.actFun(z,self.actFun_type) * self.actFun(z,self.actFun_type)
+        elif self.actFun_type == 'ReLU':
             z = 1
             if z <= 0:
                 z = 0
         else:
-            z = actFun(z, 'Sigmoid') * ( 1- actFun(z, 'Sigmoid'))
+            z = self.actFun(z,self.actFun_type) * ( 1- self.actFun(z,self.actFun_type))
 
         return z
 
@@ -113,9 +113,9 @@ class NeuralNetwork(object):
 
         # YOU IMPLEMENT YOUR feedforward HERE
 
-        self.z1 = dot(self.W1.T,X) + self.b1
-        self.a1 = actFun(self.z1, self.actFun_type)
-        self.z2 = dot(self.W2.T,self.a1) + self.b2
+        self.z1 = np.dot(X,self.W1) + self.b1
+        self.a1 = actFun(self.z1)
+        self.z2 = np.dot(self.a1,self.W2) + self.b2
 
         exp_scores = np.exp(self.z2)
         self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True) #softmax 'layer'
@@ -129,7 +129,7 @@ class NeuralNetwork(object):
         :return: the loss for prediction
         '''
         num_examples = len(X)
-        self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
+        self.feedforward(X, lambda x: self.actFun(x, typee=self.actFun_type))
         # Calculating the loss
         
         # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
@@ -141,7 +141,7 @@ class NeuralNetwork(object):
             yOneHot = np.zeros(numClasses)
             yOneHot[y[ii]] = 1  
 
-            data_loss = data_loss +  np.dot(yOneHot, np.log(self.probs))
+            data_loss = data_loss +  np.dot(yOneHot, np.log(self.probs[ii,:])) #might need to switch ii and :
 
         # Add regulatization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
@@ -153,7 +153,7 @@ class NeuralNetwork(object):
         :param X: input data
         :return: label inferred
         '''
-        self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
+        self.feedforward(X, lambda x: self.actFun(x, typee=self.actFun_type))
         return np.argmax(self.probs, axis=1)
 
     def backprop(self, X, y):
@@ -167,12 +167,24 @@ class NeuralNetwork(object):
         # IMPLEMENT YOUR BACKPROP HERE
         num_examples = len(X)
         delta3 = self.probs
-        delta3[range(num_examples), y] -= 1
-        # dW2 = dL/dW2
-        # db2 = dL/db2
-        # dW1 = dL/dW1
-        # db1 = dL/db1
-        return dW1, dW2, db1, db2
+        delta3[range(num_examples), y] = 1 #why are you subtracting a one off of all the of the labels?
+        observations , features = X.shape
+        numClasses = max(y+1)
+
+        dW2 = np.zeros([self.nn_hidden_dim,self.nn_output_dim,]) #n1 x n2
+        db2 = np.zeros([1,self.nn_output_dim]) #1 x n2
+        dW1 = np.zeros([self.nn_input_dim, self.nn_hidden_dim]) #p x n1
+        db1 = np.zeros([1,self.nn_hidden_dim]) #1 x n1
+
+        for ii in xrange(observations):
+            yOneHot = np.zeros(numClasses)
+            yOneHot[y[ii]] = 1 
+            dW2 = dW2 + np.outer(self.a1[ii] , (delta3[ii,:] - yOneHot)) #n1 x n2
+            db2 = db2 + (delta3[ii,:] - yOneHot) #1 x n2
+            for cc in xrange(numClasses):
+                dW1 = dW1 + np.multiply( (delta3[ii,cc] - yOneHot[cc]) * self.W2 ,np.dot(self.diff_actFun(self.z2[ii],self.actFun_type),X[ii] )   ).T
+                db1 = db1 + np.dot( (delta3[ii,cc] - yOneHot[cc]) * self.W2 , self.diff_actFun(self.z2[ii],self.actFun_type) )
+        return dW1/observations, dW2/observations, db1/observations, db2/observations
 
     def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
         '''
@@ -186,7 +198,7 @@ class NeuralNetwork(object):
         # Gradient descent.
         for i in range(0, num_passes):
             # Forward propagation
-            self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
+            self.feedforward(X, lambda x: self.actFun(x, typee=self.actFun_type))
             # Backpropagation
             dW1, dW2, db1, db2 = self.backprop(X, y)
 
@@ -217,12 +229,12 @@ class NeuralNetwork(object):
 def main():
     # # generate and visualize Make-Moons dataset
     X, y = generate_data()
-    plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
-    plt.show()
+    #plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
+    #plt.show()
 
-    # model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
-    # model.fit_model(X,y)
-    # model.visualize_decision_boundary(X,y)
+    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=5 , nn_output_dim=2, actFun_type='tanh')
+    model.fit_model(X,y)
+    model.visualize_decision_boundary(X,y)
 
 if __name__ == "__main__":
     main()
