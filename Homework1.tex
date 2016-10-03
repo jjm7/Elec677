@@ -24,7 +24,7 @@ tmargin = 15mm,
 \begin{document}
 
 \title{Homework 1}
-\author{Joshua Michalenko\\ ELEC 677: Deep Learning \\  Dr. Ankit Patel}
+\author{Joshua Michalenko\\ ELEC 677: Deep Learning \\  Dr.\,Ankit Patel}
 \date{10/04/16}
 \maketitle
 
@@ -133,7 +133,7 @@ For the following derivations, the derivative of the softmax $\frac{\partial \ha
 \end{align*}
 
 
-The derivative of the cross entropy loss with respect to the second layer inputs are also a useful quantity to calculate, it is derived as follows.
+The derivative of the cross entropy loss with respect to the second layer inputs are also a useful quantity to calculate, it is derived as follows. Note that I used the cross entropy for one example. Taking out the summation here makes things easier but I'll add it back in later.
 
 \begin{align*}
  \frac{\partial L }{\partial  \hat{y}_{j} }  \frac{\partial  \hat{y}_{j} }{\partial z_{2_i}}  =\frac{\partial L}{\partial z_{2_i}} &= - \sum_{j=1}^C \frac{\partial y_j log(\hat{y}_j)}{\partial z_i}{} \\
@@ -153,14 +153,16 @@ We can rewrite the loss function with substituting in the feedforward equations 
 L(y,\hat{y}) &= -  \frac{1}{N} \sum_{n \in N} \sum_{j\in C} y_{n,j} \text{log}(\hat{y}_{n,j} ) \\
 \frac{\partial L}{\partial W_2} : &=  \frac{\partial L }{\partial  \hat{y}_{n,j} }      \frac{\partial  \hat{y}_{n,j} }{\partial z_2} \frac{\partial z_2}{\partial W_2}\\
 \text{Since j-th element of $z_2$ is given by: } \\
-z_{2_j} &= \sum_{k = 0}^{n_1}w_{j,k}a_{1_k} + b_{2_k}\\ 
+z_{2_j} &= \sum_{k = 0}^{n_1}w_{j,k}a_{1_k} + b_{2_j}\\ 
 \text{The derivitive of the $j$-th element }\\
 \text{of $z_2$ w.r.t. weight $w_{j,k}$ is then: }\\
 \frac{\partial z_{2_j}}{\partial w_{j,k}} &= a_{1_k}\\
 \text{Using the derivation above for  $\frac{\partial L}{\partial z_{2_j}}$}\\
 \frac{\partial L}{\partial w_{2_{j,k}}} &=  (\hat{y}_j - y_j )a_{1_k} \\
 \therefore \\
-\Aboxed{ \frac{dL}{dW_2} &= (\mathbf{\hat{y} - y})\mathbf{a_1^T} \in  \Re^{n_2 \times n_1}}\\
+\frac{dL}{dW_2} &= (\mathbf{\hat{y} - y})\mathbf{a_1^T} \in  \Re^{n_2 \times n_1} \\\text{The above equation only takes} & \text{ into consideration on data point} \\
+\text{We extend this to multiple samples by} & \text{ plugging in the summation we originally took out.}\\
+\Aboxed{ \frac{dL}{dW_2} &= \frac{1}{N} \sum_{n \in N} (\mathbf{\hat{y}_n - y_n})\mathbf{a_1^T} \in  \Re^{n_2 \times n_1}}\\
 \end{align*}
 
 \paragraph{$\frac{dL}{db_2}$ Derivation}
@@ -169,20 +171,91 @@ This derivation will be fairly similar to the previous section except now the gr
 \begin{align*}
 \frac{\partial L}{\partial b_2} : &=  \frac{\partial L }{\partial  \hat{y}_{n,j} } \frac{\partial  \hat{y}_{n,j} }{\partial z_2} \frac{\partial z_2}{\partial b_2}\\
 \text{Since j-th element of $z_2$ is given by: } \\
-z_{2_j} &= \sum_{k = 0}^{n_1}w_{j,k}a_{1_k} + b_{2_k}\\ 
+z_{2_j} &= \sum_{k = 0}^{n_1}w_{j,k}a_{1_k} + b_{2_j}\\ 
 \text{The derivitive of the $j$-th element }\\
 \text{of $z_2$ w.r.t. bias $b_{2_k}$ is then: }\\
 \frac{\partial z_{2_j}}{\partial b_{2_k}} &= 1\\
 \text{Using the derivation above for  $\frac{\partial L}{\partial z_{2_j}}$}\\
 \frac{\partial L}{\partial b_{2_k}} &=  (\hat{y}_j - y_j )\\
 \therefore \\
-\Aboxed{ \frac{dL}{db_2} &= \mathbf{\hat{y} - y}\in  \Re^{n_2}}\\
+\frac{dL}{db_2} &= \mathbf{\hat{y} - y}\in  \Re^{n_2} \\
+\text{The above equation only takes} & \text{ into consideration on data point.} \\
+\text{We extend this to multiple samples by} & \text{ plugging in the summation we originally took out.}\\
+\Aboxed{ \frac{dL}{db_2} &= \frac{1}{N} \sum_{n \in N}  \mathbf{\hat{y}_n - y_n}\in  \Re^{n_2}}\\
 \end{align*}
 
 \paragraph{$\frac{dL}{dW_1}$ Derivation}
+We add one more layer to our previous derivation of $\frac{dL}{dW_2}$ for this derivation. The derivative can be expanded as follows
+
+\begin{align*}
+\frac{\partial L}{\partial W_1} : &=  \frac{\partial L }{\partial  \hat{y}_{n,j} } \frac{\partial  \hat{y}_{n,j} }{\partial z_2} \frac{\partial z_2}{\partial a_1}\frac{\partial a_1}{\partial z_1} \frac{\partial z_1}{\partial W_1}  \\
+\end{align*}
+
+So we need to figure out the term $\frac{\partial z_2}{\partial a_1}\frac{\partial a_1}{\partial z_1} \frac{\partial z_1}{\partial W_1} $by piecing to out. The $j$-th element of $z_1$ is given by:
+
+\begin{align*}
+z_{1_j} &= \sum_{i = 0}^p w_{1_{j,i}}x_i + b_{1_j} \\
+\text{So the derivative w.r.t. $w_{1_{j,i}}$ is then:}\\
+\frac{\partial z_{1_j} }{\partial w_{1_{j,i}}} &= x_i \\
+\end{align*}
+
+We know from part b that $\frac{\partial a_1}{\partial z_1} $ is dependent on the type of activation function but we derived all the derivatives of the three activation functions above so stating the derivatives is redundant. See the above part B. 
+
+\begin{align*}
+\frac{\partial a_1}{\partial z_1} & =  \text{actFun}'(z_1) \quad \text{ (See part B above)}
+\end{align*}
 
 
-\paragraph{$\frac{dL}{db_2}$ Derivation}
+The last part we need to derive is the $\frac{\partial z_2}{\partial a_1}$ term. 
+
+\begin{align*}
+\text{Since the j-th element } & \text{of $z_2$ is given by: } \\
+z_{2_j} &= \sum_{k = 0}^{n_1}w_{2_{j,k}}a_{1_k} + b_{2_j}\\ 
+\text{we can conclude that the}&\text{ derivative w.r.t. $a_{1_k}$ is given by }\\ 
+\frac{\partial z_{2_j}}{\partial a_{1_k}} & =w_{2_{j,k}}\\
+\text{From above, we know that}&\text{ the other partial derivatives are}\\
+\frac{\partial L }{\partial  \hat{y}_{j} }  \frac{\partial  \hat{y}_{j} }{\partial z_{2_i}}  &=\frac{\partial L}{\partial z_{2_i}} = \hat{y}_i - y_i \\
+\text{So if we piece this all } & \text{together we come up with:}\\
+\\
+\frac{\partial L}{\partial w_{1_{k,p}}} : &=  \frac{\partial L }{\partial  \hat{y}_{n,c} } \frac{\partial  \hat{y}_{n,c} }{\partial z_{2_c}} \frac{\partial z_{2_c}}{\partial a_{1_k}}\frac{\partial a_{1_k}}{\partial z_{1_k}} \frac{\partial z_{1_k}}{\partial w_{1_{k,p}}}  
+\end{align*}
+
+Which I changed some of the indexing to make the most sense. In this format $n \in N$, $c \in C$,   , $k \in \{0,... , n_1-1  \}$, $p \in \{0,... , P-1  \}$ with $P$ input features. The resulting derivative with respect to one weight in the first layer $w_{1_{k,p}}$ is then:
+
+\begin{align*}
+\frac{\partial L}{\partial w_{1_{k,p}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})x_p \\
+\text{and the extention}&\text{ to matrix form is then} \\
+\frac{\partial L}{\partial \mathbf{W_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times n_2} \\
+\text{If there is more}&\text{than one sample (which there always is)}\\
+\text{then we average}&\text{over all of the samples and the final solution is then} \\
+\Aboxed{\frac{\partial L}{\partial \mathbf{W_1}} &=\sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times n_2}} \\
+\end{align*}
+
+\paragraph{$\frac{dL}{db_1}$ Derivation}
+The derivation is very similar to the $\frac{dL}{dW_1}$ except the last part of the chain of partial derivatives is changed. The gradient equation of the Loss function with respect to a single bias term in the first layer is 
+
+\begin{align*}
+\frac{\partial L}{\partial b_{1_{k}}} : &=  \frac{\partial L }{\partial  \hat{y}_{n,c} } \frac{\partial  \hat{y}_{n,c} }{\partial z_{2_c}} \frac{\partial z_{2_c}}{\partial a_{1_k}}\frac{\partial a_{1_k}}{\partial z_{1_k}} \frac{\partial z_{1_k}}{\partial b_{1_{k}}}  \\
+\end{align*}
+
+So we only need to calculate $\frac{\partial z_{1_k}} {\partial b_{1_{k}} }$ first. Let's look at how the $k$ th value is calculated. 
+
+\begin{align*}
+z_{1_k} &= \sum_{i = 0}^p w_{1_{k,i}}x_i + b_{1_k} \\
+\text{So the derivative w.r.t. $b_{1_{k}}$ is then:}\\
+\frac{\partial z_{1_j} }{\partial b_{1_{k}}} &= 1 \\
+\end{align*}
+
+The partial derivative  $\frac{\partial z_{1_k}} {\partial b_{1_{k}} } =1$ simplified the equation for the partial derivative of the loss function w.r.t. $b_{1_{k}} $ as
+
+\begin{align*}
+\frac{\partial L}{\partial b_{1_{k}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})\\
+\text{and the resulting matrix} &\text{ form is then}\\
+\frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} \\
+\text{If there is more than one}&\text{ sample (which there always is) then we}\\
+\text{have to sum up and}& \text{ average over all samples and the gradient becomes}\\
+\Aboxed{ \frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} } \\
+\end{align*}
 
 \subsubsection{Implementation of Derivations of Backpropogation Equations}
 If you look in my code you can see I implemented the backpropogation equations
