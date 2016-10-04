@@ -76,8 +76,8 @@ class NeuralNetwork(object):
 
         if typee == 'tanh':
             z = (np.exp(z) - np.exp(-z)) /  (np.exp(z) + np.exp(-z))
-        elif typee == 'ReLU':
-            z = np.max(0,z)
+        elif typee == 'relu':
+            z = np.maximum(0,z)
         else:
             z = 1/( 1+np.exp(-z) )
 
@@ -93,12 +93,12 @@ class NeuralNetwork(object):
 
         if self.actFun_type == 'tanh':
             z = 1 - self.actFun(z,self.actFun_type) * self.actFun(z,self.actFun_type)
-        elif self.actFun_type == 'ReLU':
+        elif self.actFun_type == 'relu':
             z = 1
             if z <= 0:
                 z = 0
         else:
-            z = self.actFun(z,self.actFun_type) * ( 1- self.actFun(z,self.actFun_type))
+            z = np.exp(z) / (np.exp(z) + 1) ** 2
 
         return z
 
@@ -145,7 +145,7 @@ class NeuralNetwork(object):
 
         # Add regulatization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
-        return (1. / num_examples) * data_loss
+        return -(1. / num_examples) * data_loss
 
     def predict(self, X):
         '''
@@ -167,7 +167,7 @@ class NeuralNetwork(object):
         # IMPLEMENT YOUR BACKPROP HERE
         num_examples = len(X)
         delta3 = self.probs
-        delta3[range(num_examples), y] = 1 #why are you subtracting a one off of all the of the labels?
+        delta3[range(num_examples), y] -= 1 #why are you subtracting a one off of all the of the labels?
         observations , features = X.shape
         numClasses = max(y+1)
 
@@ -176,15 +176,31 @@ class NeuralNetwork(object):
         dW1 = np.zeros([self.nn_input_dim, self.nn_hidden_dim]) #p x n1
         db1 = np.zeros([1,self.nn_hidden_dim]) #1 x n1
 
-        for ii in xrange(observations):
-            yOneHot = np.zeros(numClasses)
-            yOneHot[y[ii]] = 1 
-            dW2 = dW2 + np.outer(self.a1[ii] , (delta3[ii,:] - yOneHot)) #n1 x n2
-            db2 = db2 + (delta3[ii,:] - yOneHot) #1 x n2
-            for cc in xrange(numClasses):
-                dW1 = dW1 + np.multiply( (delta3[ii,cc] - yOneHot[cc]) * self.W2 ,np.dot(self.diff_actFun(self.z2[ii],self.actFun_type),X[ii] )   ).T
-                db1 = db1 + np.dot( (delta3[ii,cc] - yOneHot[cc]) * self.W2 , self.diff_actFun(self.z2[ii],self.actFun_type) )
+        dW2 = np.dot(self.a1.T , delta3 ) #n1 x n2
+        db2 = np.sum(delta3,axis = 0) #1 x n2
+
+        delta2 = np.multiply(np.dot(delta3,self.W2.T) , self.diff_actFun(self.z1,self.actFun_type) )
+        db1 = np.sum(delta2,axis = 0)
+        dW1 = np.dot(X.T,delta2)
+        
         return dW1/observations, dW2/observations, db1/observations, db2/observations
+
+    def backwards(delta, x, W, prev_z=None, actFun_type=None, first_layer=False):
+        """
+        Perform a backwards pass over an affine layer
+        :param delta: delta of the layer in front
+        :param x: input into the layer
+        :return: dW, db, and delta for this level
+        """
+        db = 1. / len(x) * np.sum(delta, axis=0)
+        dW = 1. / len(x) * x.T.dot(delta)
+        dx = None
+        if not first_layer:
+            dx = delta.dot(W.T) * NeuralNetwork.diff_actFun(prev_z, actFun_type)
+        return dW, db, dx
+    def forwards(X, W, b):
+        return X.dot(W) + b
+
 
     def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
         '''
@@ -232,7 +248,7 @@ def main():
     #plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
     #plt.show()
 
-    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=5 , nn_output_dim=2, actFun_type='tanh')
+    model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=10 , nn_output_dim=2, actFun_type='sigmoid', reg_lambda=0.0)
     model.fit_model(X,y)
     model.visualize_decision_boundary(X,y)
 

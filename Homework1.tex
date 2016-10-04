@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath,mathtools,amssymb}
 \newcommand{\code}[1]{\texttt{#1}}
+\usepackage{subfigure}
 
 \usepackage{geometry}
  \geometry{
@@ -223,12 +224,12 @@ z_{2_j} &= \sum_{k = 0}^{n_1}w_{2_{j,k}}a_{1_k} + b_{2_j}\\
 Which I changed some of the indexing to make the most sense. In this format $n \in N$, $c \in C$,   , $k \in \{0,... , n_1-1  \}$, $p \in \{0,... , P-1  \}$ with $P$ input features. The resulting derivative with respect to one weight in the first layer $w_{1_{k,p}}$ is then:
 
 \begin{align*}
-\frac{\partial L}{\partial w_{1_{k,p}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})x_p \\
+\frac{\partial L}{\partial w_{1_{k,p}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{1_k})x_p \\
 \text{and the extention}&\text{ to matrix form is then} \\
-\frac{\partial L}{\partial \mathbf{W_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times p} \\
+\frac{\partial L}{\partial \mathbf{W_1}} &= (\mathbf{ \hat{y}} - \mathbf{y}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_1})\mathbf{x^T} \in \Re^{n_1 \times p} \\
 \text{If there is more}&\text{than one sample (which there always is)}\\
 \text{then we average}&\text{over all of the samples and the final solution is then} \\
-\Aboxed{\frac{\partial L}{\partial \mathbf{W_1}} &=  \frac{1}{N} \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_2})\mathbf{x^T} \in \Re^{n_1 \times p}} \\
+\Aboxed{\frac{\partial L}{\partial \mathbf{W_1}} &=  \frac{1}{N} \sum_{n\in N} (\mathbf{ \hat{y}} - \mathbf{y}) \mathbf{W_2}  \odot \text{actFun}'(\mathbf{z_1})\mathbf{x^T} \in \Re^{n_1 \times p}} \\
 \end{align*}
 
 \paragraph{$\frac{dL}{db_1}$ Derivation}
@@ -249,17 +250,102 @@ z_{1_k} &= \sum_{i = 0}^p w_{1_{k,i}}x_i + b_{1_k} \\
 The partial derivative  $\frac{\partial z_{1_k}} {\partial b_{1_{k}} } =1$ simplified the equation for the partial derivative of the loss function w.r.t. $b_{1_{k}} $ as
 
 \begin{align*}
-\frac{\partial L}{\partial b_{1_{k}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{2_k})\\
+\frac{\partial L}{\partial b_{1_{k}}} &= \sum_{c\in C}( \hat{y}_c - y_c) w_{2_{c,k}}\text{actFun}'(z_{1_k})\\
 \text{and the resulting matrix} &\text{ form is then}\\
-\frac{\partial L}{\partial \mathbf{b_1}} &= \sum_{c\in C}( \hat{y}_c - y_c) \mathbf{W_2^T} \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} \\
+\frac{\partial L}{\partial \mathbf{b_1}} &=(\mathbf{ \hat{y}} - \mathbf{y}) \mathbf{W_2^T} \text{actFun}'(\mathbf{z_1})\in \Re^{n_1} \\
 \text{If there is more than one}&\text{ sample (which there always is) then we}\\
 \text{have to sum up and}& \text{ average over all samples and the gradient becomes}\\
-\Aboxed{ \frac{\partial L}{\partial \mathbf{b_1}} &=  \frac{1}{N} \sum_{n\in N} \sum_{c\in C}( \hat{y}_{n,c} - y_{n,c}) \mathbf{W_2^T}  \text{actFun}'(\mathbf{z_2})\in \Re^{n_1} } \\
+\Aboxed{ \frac{\partial L}{\partial \mathbf{b_1}} &=  \frac{1}{N} \sum_{n\in N}( \mathbf{ \hat{y}} - \mathbf{y}) \mathbf{W_2^T} \odot \text{actFun}'(\mathbf{z_1})\in \Re^{n_1} } \\
 \end{align*}
 
 \subsubsection{Implementation of Derivations of Backpropogation Equations}
-If you look in my code you can see I implemented the backpropogation equations
+If you look in my code you can see I implemented the backpropogation equations correctly.
 
+\subsection{Time to Have Fun - Training!}
+\subsubsection{Change the activation functions and number of hidden units Part 1 and 2}
+The decision boundaries are shown for tanh, sigmoid, and relu functions for 3, 10 and 20 hidden hidden units.
+Using the default 3 hidden units with different activation functions, we get Figures \ref{fig:3hid1},\ref{fig:3hid2}, and \ref{fig:3hid3}.
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_3hid_tanh_pt260loss.png}
+    \end{subfigure}%
+    \caption{Default settings, 3 hidden units with tanh activation fuctions. Loss = .260}
+\label{fig:3hid1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_3hid_sigmoid_pt304loss.png}
+    \end{subfigure}
+    \caption{3 hidden units with sigmoid activation fuctions. Loss = .304}
+\label{fig:3hid2}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_3hid_relu_pt305loss.png}
+    \end{subfigure}
+    \caption{3 hidden units with ReLU activation fuctions. Loss = .305}
+\label{fig:3hid3}
+\end{figure*}
+
+Increasing the number of hidden units to 10 gives us figures \ref{fig:10hid1}, \ref{fig:10hid2} and  \ref{fig:10hid3}
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_10hid_tanh_pt246loss.png}
+    \end{subfigure}%
+    \caption{10 hidden units with tanh activation fuctions. Loss = .246}
+ \label{fig:10hid1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_10hid_sigmoid_pt301loss.png}
+    \end{subfigure}
+    \caption{10 hidden units with sigmoid activation fuctions. Loss = .301}
+ \label{fig:10hid2}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_10hid_relu_pt302loss.png}
+    \end{subfigure}
+    \caption{10 hidden units with ReLU activation fuctions. Loss = .302}
+ \label{fig:10hid3}
+\end{figure*}
+
+Increasing the number of hidden units to 20 gives us figure \ref{fig:20hid1}, \ref{fig:20hid2} and  \ref{fig:20hid3}
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_20hid_tanh_pt191loss.png}
+    \end{subfigure}%
+    \caption{20 hidden units with tanh activation fuctions. Loss = .191}
+ \label{fig:20hid1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_20hid_sigmoid_pt288loss.png}
+    \end{subfigure}
+    \caption{20 hidden units with sigmoid activation fuctions. Loss = .288}
+ \label{fig:20hid2}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/default_20hid_relu_pt300loss.png}
+    \end{subfigure}
+    \caption{20 hidden units with ReLU activation fuctions. Loss = .300}
+ \label{fig:20hid3}
+\end{figure*}
+
+The Tanh activation function seems to be the most expressive, it curves much more than the sigmoid and relu activations functions. The Relu activation function decision boundary looks piecewise linear which makes sense because it is. The sigmoid function looks practically linear for a small number of hidden units, but as the number of hidden units is increased, we seem more expressively in the decision boundary. 
+
+As we increase the number of hidden units in the Tanh network specifically, the decision boundary becomes very expressive and using 20 hidden units, is almost able to create a decision boundary that separates the two classes. 
+
+\subsection{Building a deeper network}
 
 \end{document}
 
