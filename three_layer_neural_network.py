@@ -186,12 +186,6 @@ class NeuralNetwork(object):
         return dW1/observations, dW2/observations, db1/observations, db2/observations
 
     def backwards(delta, x, W, prev_z=None, actFun_type=None, first_layer=False):
-        """
-        Perform a backwards pass over an affine layer
-        :param delta: delta of the layer in front
-        :param x: input into the layer
-        :return: dW, db, and delta for this level
-        """
         db = 1. / len(x) * np.sum(delta, axis=0)
         dW = 1. / len(x) * x.T.dot(delta)
         dx = None

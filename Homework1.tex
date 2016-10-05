@@ -285,7 +285,7 @@ Using the default 3 hidden units with different activation functions, we get Fig
         \centering
         \includegraphics[height=2.5in]{figures/default_3hid_relu_pt305loss.png}
     \end{subfigure}
-    \caption{3 hidden units with ReLU activation fuctions. Loss = .305}
+    \caption{3 hidden units with ReLU activation fuctions. Loss = .235}
 \label{fig:3hid3}
 \end{figure*}
 
@@ -311,7 +311,7 @@ Increasing the number of hidden units to 10 gives us figures \ref{fig:10hid1}, \
         \centering
         \includegraphics[height=2.5in]{figures/default_10hid_relu_pt302loss.png}
     \end{subfigure}
-    \caption{10 hidden units with ReLU activation fuctions. Loss = .302}
+    \caption{10 hidden units with ReLU activation fuctions. Loss = .202}
  \label{fig:10hid3}
 \end{figure*}
 
@@ -337,15 +337,582 @@ Increasing the number of hidden units to 20 gives us figure \ref{fig:20hid1}, \r
         \centering
         \includegraphics[height=2.5in]{figures/default_20hid_relu_pt300loss.png}
     \end{subfigure}
-    \caption{20 hidden units with ReLU activation fuctions. Loss = .300}
+    \caption{20 hidden units with ReLU activation fuctions. Loss = .150}
  \label{fig:20hid3}
 \end{figure*}
 
 The Tanh activation function seems to be the most expressive, it curves much more than the sigmoid and relu activations functions. The Relu activation function decision boundary looks piecewise linear which makes sense because it is. The sigmoid function looks practically linear for a small number of hidden units, but as the number of hidden units is increased, we seem more expressively in the decision boundary. 
 
-As we increase the number of hidden units in the Tanh network specifically, the decision boundary becomes very expressive and using 20 hidden units, is almost able to create a decision boundary that separates the two classes. 
+As we increase the number of hidden units in the Tanh network specifically, the decision boundary becomes very expressive and using 20 hidden units, is almost able to create a decision boundary that separates the two classess. 
 
 \subsection{Building a deeper network}
+In my github I have created the n layer neural network. py file where I have implemented another class called deep network which inherits from the three layer network. I pretty much followed the hints provided in the homework to created the deep neural network. 
+
+I have tested the neural network with various 1,2,3,4, and 5 layer networks with various activation functions and sizes for layers. It generally helps that the layers have a decreasing number of hidden units as you feedforward I have found out. A 5 layer network with decreaseing numbers of hidden units 20,16,10,4,4 outperforms a 5 layer network with all the same 10,10,10,10,10 and also better than and network with an increasing number of hidden units 4,4,10,16,20 which makes intuitive sense. The tanh activation function also seems to perform the best. Figures \ref{fig:2layer1}, \ref{fig:2layer2} and \ref{fig:2layer3} show decision boundaries after 10000 iterations of 2 layer network with different activation functions. 
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/2layer_20_10_lossPt14_tanh.png}
+    \end{subfigure}%
+    \caption{2 layer network with hidden units [20,10] with a tanh activation fuction. Loss = .14}
+ \label{fig:2layer1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/2layer_20_10_lossPt349_sigmoid.png}
+    \end{subfigure}
+    \caption{2 layer network with hidden units [20,10] with a sigmoid activation fuction. Loss = .349}
+ \label{fig:2layer2}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/2layer_20_10_lossPt142_relu.png}
+    \end{subfigure}
+    \caption{2 layer network with hidden units [20,10] with a relu activation fuction. Loss = .142}
+ \label{fig:2layer3}
+\end{figure*}
+
+Figures \ref{fig:3layer1}, \ref{fig:3layer2} and \ref{fig:3layer3} show decision boundaries after 10000 iterations of 3 layer network with different activation functions. Sigmoids just suck.
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/3layer_30_20_10_lossPt10_tanh.png}
+    \end{subfigure}%
+    \caption{3 layer network with hidden units [30,20,10] with a tanh activation fuction. Loss = .14}
+ \label{fig:3layer1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/3layer_30_20_10_lossPt68_sigmoid.png}
+    \end{subfigure}
+    \caption{3 layer network with hidden units [30,20,10] with a sigmoid activation fuction. Loss = .349}
+ \label{fig:3layer2}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/3layer_30_20_10_lossPt095_relu.png}
+    \end{subfigure}
+    \caption{3 layer network with hidden units [30,20,10] with a relu activation fuction. Loss = .142}
+ \label{fig:3layer3}
+\end{figure*}
+
+Figures \ref{fig:4layer1} and \ref{fig:4layer3} show decision boundaries after 10000 iterations of 4 layer network with the tanh and relu activation functions. After this point sigmoids still do not perform well and I didn't even include the plot. 
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/4layer_10_10_6_3_lossPt09_tanh.png}
+    \end{subfigure}%
+    \caption{4 layer network with hidden units [10,10,6,3] with a tanh activation fuction. Loss = .09}
+ \label{fig:4layer1}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/4layer_10_10_6_3_lossPt086_relu.png}
+    \end{subfigure}
+    \caption{4 layer network with hidden units[10,10,6,3] with a relu activation fuction. Loss = .142}
+ \label{fig:4layer3}
+\end{figure*}
+
+It seems to be a general trend that as you go deeper, you get more interesting decision boundaries, the network has more expressivity, and loss goes down, which are all great things. 
+
+\subsubsection{Use a different dataset}
+The different dataset I choose to use was the 'make\_circles' dataset. I choose this dataset because it was the first dataset on the website that I could find and it is also 2 dimensional to not complicate the problem. I experimented with different networks with varying amounts of layers, activation functions. 
+
+\section{Training a Simple Deep Convolutional Network on MNIST}
+Parts 1-4 require use to read documents and fill in code, you can see I filled in the code from my github. Part 4 asks what the final training accuracy is after the network is run. My test accuracy is $98.78\%$.
+\subsection{Visualize the training}
+In this section we are asked to use tensorboard to visualize variables that are of importance to us during training. We can visualize the mean error as a function of the number of training iterations this way given by figure \ref{fig:MeanError}.
+
+\begin{figure*}[ht]
+        \centering
+        \includegraphics[height=2.5in]{figures/mean.png}
+    \caption{Mean Error as function of \# of training iterations}
+ \label{fig:MeanError}
+\end{figure*}
+
+If we look at the graphs in the 'graphs' section of TensorBoard, we can see the variables in Tensorflow as well as how these variables interact with each other via the network architecture. The variables and network architecture are given by figure \ref{fig:network}.
+
+\begin{figure*}[ht]
+        \centering
+        \includegraphics[height=8in]{figures/networkArchitecture.png}
+    \caption{Network Architecture}
+ \label{fig:network}
+\end{figure*}
+
+
+\subsection{Visualize the training More!}
+After implementing the min, max, mean, standard deviation and histogram functions into the dcn-mnist.py file, we can now visualize these characteristics of the weights, biases, inputs, activations at the relu and activations at the max pooling for every layer. Since for every layer, this is around 25 plots, I will only provide the first 2 layers of these characteristics to show that I've implemented the feature. I also include errors for training, validation and testing. All of these plots are figures \ref{fig:/layer1a_max} thru \ref{fig:testingError1}
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1a_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of activations after relu in layer one for all iterations}
+ \label{fig:/layer1a_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1a_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of activations after relu in layer one for all iterations}
+ \label{fig:/layer1a_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1a_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of activations after relu in layer one for all iterations}
+ \label{fig:/layer1a_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1a_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of activations after relu in layer one for all iterations}
+ \label{fig:/layer1a_std}
+\end{figure*}
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1b_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of biases in layer one for all iterations}
+ \label{fig:/layer1b_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1b_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of biases in layer one for all iterations}
+ \label{fig:/layer1b_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1b_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of biases in layer one for all iterations}
+ \label{fig:/layer1b_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1b_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of biases in layer one for all iterations}
+ \label{fig:/layer1b_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in layer one for all iterations}
+ \label{fig:/layer1b_hist}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1i_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of inputs to layer one for all iterations}
+ \label{fig:/layer1i_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1i_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of inputs to layer one for all iterations}
+ \label{fig:/layer1i_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1i_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of inputs tolayer one for all iterations}
+ \label{fig:/layer1i_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1i_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of inputs tolayer one for all iterations}
+ \label{fig:/layer1i_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of inputs to layer one for all iterations}
+ \label{fig:/layer1i_hist}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1mp_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer1mp_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1mp_mean.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in inputs layer one for all iterations}
+ \label{fig:/layer1mp_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1mp_min.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer1mp_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1mp_std.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer1mp_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer1mp_hist}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1w_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of weights in layer one for all iterations}
+ \label{fig:/layer1w_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1w_mean.png}
+    \end{subfigure}%
+    \caption{Plot of weights in inputs layer one for all iterations}
+ \label{fig:/layer1w_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1w_min.png}
+    \end{subfigure}%
+    \caption{Plot of weights in layer one for all iterations}
+ \label{fig:/layer1w_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1w_std.png}
+    \end{subfigure}%
+    \caption{Plot of weights in layer one for all iterations}
+ \label{fig:/layer1w_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer1w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in layer one for all iterations}
+ \label{fig:/layer1w_hist}
+\end{figure*}
+
+%%%%%%%layer2
+\clearpage
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2a_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of activations after relu in layer two for all iterations}
+ \label{fig:/layer2a_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2a_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of activations after relu in layer two for all iterations}
+ \label{fig:/layer2a_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2a_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of activations after relu in layer two for all iterations}
+ \label{fig:/layer2a_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2a_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of activations after relu in layer two for all iterations}
+ \label{fig:/layer2a_std}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2b_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of biases in layer one for all iterations}
+ \label{fig:/layer2b_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2b_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of biases in layer one for all iterations}
+ \label{fig:/layer2b_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2b_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of biases in layer one for all iterations}
+ \label{fig:/layer2b_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2b_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of biases in layer one for all iterations}
+ \label{fig:/layer2b_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in layer one for all iterations}
+ \label{fig:/layer2b_hist}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2i_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of inputs to layer one for all iterations}
+ \label{fig:/layer2i_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2i_mean.png}
+    \end{subfigure}%
+    \caption{Plot of mean of inputs to layer one for all iterations}
+ \label{fig:/layer2i_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2i_min.png}
+    \end{subfigure}%
+    \caption{Plot of min of inputs tolayer one for all iterations}
+ \label{fig:/layer2i_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2i_std.png}
+    \end{subfigure}%
+    \caption{Plot of std of inputs tolayer one for all iterations}
+ \label{fig:/layer2i_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of inputs to layer one for all iterations}
+ \label{fig:/layer2i_hist}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2mp_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer2mp_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2mp_mean.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in inputs layer one for all iterations}
+ \label{fig:/layer2mp_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2mp_min.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer2mp_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2mp_std.png}
+    \end{subfigure}%
+    \caption{Plot of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer2mp_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activtions after max pooling in layer one for all iterations}
+ \label{fig:/layer2mp_hist}
+\end{figure*}
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2w_max.png}
+    \end{subfigure}%
+    \caption{Plot of maximum of weights in layer one for all iterations}
+ \label{fig:/layer2w_max}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2w_mean.png}
+    \end{subfigure}%
+    \caption{Plot of weights in inputs layer one for all iterations}
+ \label{fig:/layer2w_mean}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2w_min.png}
+    \end{subfigure}%
+    \caption{Plot of weights in layer one for all iterations}
+ \label{fig:/layer2w_min}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2w_std.png}
+    \end{subfigure}%
+    \caption{Plot of weights in layer one for all iterations}
+ \label{fig:/layer2w_std}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/layer2w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in layer one for all iterations}
+ \label{fig:/layer2w_hist}
+\end{figure*}
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/trainingError.png}
+    \end{subfigure}%
+    \caption{Training Error for the default covNet}
+ \label{fig:TrainingError1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/validationError.png}
+    \end{subfigure}%
+    \caption{Validation Error for the default covNet}}
+ \label{fig:ValidationError1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/relu/testError.png}
+    \end{subfigure}%
+    \caption{Testing Error for the default covNet}}
+ \label{fig:testingError1}
+\end{figure*}
+
+
+
 
 \end{document}
 
