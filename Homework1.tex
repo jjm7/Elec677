@@ -422,7 +422,25 @@ Figures \ref{fig:4layer1} and \ref{fig:4layer3} show decision boundaries after 1
 It seems to be a general trend that as you go deeper, you get more interesting decision boundaries, the network has more expressivity, and loss goes down, which are all great things. 
 
 \subsubsection{Use a different dataset}
-The different dataset I choose to use was the 'make\_circles' dataset. I choose this dataset because it was the first dataset on the website that I could find and it is also 2 dimensional to not complicate the problem. I experimented with different networks with varying amounts of layers, activation functions. 
+The different dataset I choose to use was the 'make\_circles' dataset. I choose this dataset because it was the first dataset on the website that I could find and it is also 2 dimensional to not complicate the problem. I experimented with different networks with varying amounts of layers, activation function. One of the interesting things that I found is that some of the networks are very finicky. I had a 5 layer [20,16,10,4,4] hidden unit network that I was using on the two circles dataset that worked really well when the noise was around 15\% shown in figure \ref{fig:hihi} but when I increased the noise just a little bit the network fell apart as shown by the decision boundary in figure \ref{fig:hihi1}. I experimented with various architectures and different activation functions like in the previous section but I found the 5 layer [20,16,10,4,4] hidden unit network with a tanh activation function worked the best. 
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/5layer_20_16_10_4_4_lossPt69_tanh_circles1.png}
+    \end{subfigure}%
+    \caption{5 layer [4,4,10,16,20] network with tanh activtion function on two cirlces dataset showing a nice decision boundary when noise is low. . Loss = .08}
+ \label{fig:hihi}
+    ~ 
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2.5in]{figures/5layer_20_16_10_4_4_lossPt69_tanh_circles.png}
+    \end{subfigure}
+    \caption{5 layer [4,4,10,16,20] network with tanh activtion function on two cirlces dataset showing a bad decision boundary when noise is turned up by 5 percent.  Loss = .69}
+ \label{fig:hihi1}
+\end{figure*}
+
 
 \section{Training a Simple Deep Convolutional Network on MNIST}
 Parts 1-4 require use to read documents and fill in code, you can see I filled in the code from my github. Part 4 asks what the final training accuracy is after the network is run. My test accuracy is $98.78\%$.
@@ -899,7 +917,7 @@ After implementing the min, max, mean, standard deviation and histogram function
         \centering
         \includegraphics[height=2in]{figures/relu/validationError.png}
     \end{subfigure}%
-    \caption{Validation Error for the default covNet}}
+    \caption{Validation Error for the default covNet}
  \label{fig:ValidationError1}
     ~ 
     \centering
@@ -907,10 +925,219 @@ After implementing the min, max, mean, standard deviation and histogram function
         \centering
         \includegraphics[height=2in]{figures/relu/testError.png}
     \end{subfigure}%
-    \caption{Testing Error for the default covNet}}
+    \caption{Testing Error for the default covNet}
  \label{fig:testingError1}
 \end{figure*}
 
+\clearpage
+\subsection{Visualize the training More!}
+
+This section of the homework asks us to try different activation functions, initializations, and training algorithms and display the results from Tensorboard. I will just provide the histograms of the important variables from the first and second layer becasue those histograms have the mean, min, max, and std of the variable inherently coded in them. I will show 2 different configurations to show that I've been experimenting but adding all of the figures the report is a tedious, time consuming process that takes way too much time than what it is worth. The first is using Xavier initialization, a ReLU non-linearity, and adaGrad in figures \ref{fig:/layer1a_hist1} thru \ref{fig:trainError1} with a resulting testing error of 1.9\%. The second configuration is using a leaky ReLu, Xavier initialization, and SGD and the histograms of the 5 variables in each layer are given by figures  \ref{fig:/layer1a_hist2} thru \ref{fig:trainError2} with a resulting testing error 2.2\% error. Different combination of non-linearities, initializations, and optimization methods provide different results. I found that generally every network can be improved with Xavier initialization and in this case adaGrad helped out training a lot. But that may not be true for all scenarios and datasets. I found that pretty much all the fancy optimization methods like adaGrad, and momentum based methods did really well, beating SGD. But SGD is still very good becasue it is simple and pretty much always works. Overall I thought this was a very long homework but I learned a lot about training networks. I could do without the really large reports and plot making though. 
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer1a_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations in layer one for all iterations}
+ \label{fig:/layer1a_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer1b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in  layer one for all iterations}
+ \label{fig:/layer1b_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer1i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of  inputs in  layer one for all iterations}
+ \label{fig:/layer1i_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer1mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations after max pooling in  layer one for all iterations}
+ \label{fig:/layer1mp_hist1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer1w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in  layer one for all iterations}
+ \label{fig:/layer1w_hist1}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer2a_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations in layer one for all iterations}
+ \label{fig:/layer2a_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer2b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in  layer one for all iterations}
+ \label{fig:/layer2b_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer2i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of  inputs in  layer one for all iterations}
+ \label{fig:/layer2i_hist1}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer2mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations after max pooling in  layer one for all iterations}
+ \label{fig:/layer2mp_hist1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/layer2w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in layer one for all iterations}
+ \label{fig:/layer2w_hist1}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/ReLU_Adagrad_X/trainingError.png}
+    \end{subfigure}%
+    \caption{Training Error for all iterations}
+ \label{fig:trainError1}
+\end{figure*}
+%%%%%%%%%%%%%%%second configuration
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer1a_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations in layer one for all iterations}
+ \label{fig:/layer1a_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer1b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in  layer one for all iterations}
+ \label{fig:/layer1b_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer1i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of  inputs in  layer one for all iterations}
+ \label{fig:/layer1i_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer1mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations after max pooling in  layer one for all iterations}
+ \label{fig:/layer1mp_hist2}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer1w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in  layer one for all iterations}
+ \label{fig:/layer1w_hist2}
+\end{figure*}
+
+
+
+\begin{figure*}[ht]
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer2a_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations in layer one for all iterations}
+ \label{fig:/layer2a_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer2b_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of biases in  layer one for all iterations}
+ \label{fig:/layer2b_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer2i_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of  inputs in  layer one for all iterations}
+ \label{fig:/layer2i_hist2}
+    ~ 
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer2mp_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of activations after max pooling in  layer one for all iterations}
+ \label{fig:/layer2mp_hist2}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/layer2w_hist.png}
+    \end{subfigure}%
+    \caption{Histogram of weights in layer one for all iterations}
+ \label{fig:/layer2w_hist2}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}
+        \centering
+        \includegraphics[height=2in]{figures/LReLU_X_SGD_lrM/trainingError.png}
+    \end{subfigure}%
+    \caption{Training Error for all iterations}
+ \label{fig:trainError2}
+\end{figure*}
+
+\section{Link to my code}
+\code{https://github.com/jjm7/Elec677/tree/Homework1}
 
 
 
