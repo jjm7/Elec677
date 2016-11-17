@@ -195,10 +195,10 @@ optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy, global
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(tf_labels, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-
+tf.scalar_summary('training_accuracy', accuracy)
 # --------------------------------------------------
 # optimization
-tf.scalar_summary(cross_entropy.op.name, cross_entropy)
+tf.scalar_summary('cross_entropy', cross_entropy)
 
 # Try to do a tf.split() on the filter tensor rather than transposing it
 splits = tf.split(3, 32, filter)
@@ -213,13 +213,16 @@ for i in range(len(splits)):
 # img_summary = tf.image_summary('filter', splits)
 summary_op = tf.merge_all_summaries()
 
+result_dir = './results/'
+RUN = 'AdamReluViz15000'
+train_writer = tf.train.SummaryWriter(result_dir + RUN + '/train', sess.graph)
 
 sess.run(tf.initialize_all_variables())
 
 
 batch_xs = np.zeros(shape = [batchsize,width,height,nchannels])#setup as [batchsize, width, height, numberOfChannels] and use np.zeros()
 batch_ys = np.zeros(shape = [batchsize,nclass])#setup as [batchsize, the how many classes] 
-for i in range(100): # try a small iteration size once it works then continue
+for i in range(15000): # try a small iteration size once it works then continue
     perm = np.arange(nsamples)
     np.random.shuffle(perm)
     for j in range(batchsize):
@@ -227,10 +230,16 @@ for i in range(100): # try a small iteration size once it works then continue
         batch_ys[j,:] = LTrain[perm[j],:]
 
     summary_str = sess.run(summary_op, feed_dict={tf_data: batch_xs, tf_labels:batch_ys, keep_prob:0.5})
-    if i%10 == 0:
+    train_writer.add_summary(summary_str, i)
+    train_writer.flush()
+
+    if i%200 == 0:
         #calculate train accuracy and print 
         train_accuracy = accuracy.eval(feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})
         print("step %d, training accuracy %f"%(i, train_accuracy))
+        summary_str = sess.run(summary_op,feed_dict={tf_data: batch_xs, tf_labels: batch_ys, keep_prob: 1.0})
+        
+        train_writer.add_summary(summary_str, i)
 
     optimizer.run(feed_dict={tf_data:batch_xs, tf_labels:batch_ys,keep_prob:0.5}) # dropout only during training
 
